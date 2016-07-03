@@ -1,0 +1,91 @@
+﻿<!-- Update test -->
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-16LE"><title>Scratch Texture Converter</title>
+<style>
+  .thumb {
+    height: 75px;
+    border: 1px solid #000;
+    margin: 10px 5px 0 0;
+  }
+</style>
+
+</head><body>
+<input id="files" name="files[]" multiple="" type="file">
+<br>
+<!-- <output id="list"></output> -->
+<canvas id="drawhere"></canvas>
+
+<script>
+function imageLoaded() {
+	//var includeAlpha = document.getElementById('alphaCheckbox').checked;
+	canvass.width = im.width;
+	canvass.height = im.height;
+	context.drawImage(im, 0, 0);
+	levelData = context.getImageData(0, 0, im.width, im.height);
+	string = "";
+	pos = 0;
+
+	tiles= Math.floor(im.width) * Math.floor(im.height);
+
+	for (i = 0; i < tiles; i++) {
+		string += decimalToHex(levelData.data[i*4]*65536+levelData.data[i*4+1]*256+levelData.data[i*4+2],6);
+		//string += "\n";
+	}
+	string += decimalToHex(im.width);
+	
+	//outputdiv = document.getElementById('output');
+	//outputdiv.innerHTML = string;
+	copyToClipboard(string);
+}
+	function decimalToHex(d, padding) {
+		var hex = Number(d).toString(16);
+		padding = typeof (padding) === "undefined" || padding === null ? padding = 2 : padding;
+
+		while (hex.length < padding) {
+			hex = "0" + hex;
+		}
+
+		return hex;
+	}
+	
+	function copyToClipboard(text) {
+	  window.prompt("Copy to clipboard: Ctrl+C, Enter", text);
+	}
+
+  function handleFileSelect(evt) {
+	canvass = document.getElementById('drawhere');
+	context = canvass.getContext('2d');
+    var files = evt.target.files; // FileList object
+
+    for (var i = 0, f; f = files[i]; i++) {
+
+      // Only process image files.
+      if (!f.type.match('image.*')) {
+        continue;
+      }
+
+      var reader = new FileReader();
+      reader.onload = (function(theFile) {
+        return function(e) {
+          // Render thumbnail.
+          var span = document.createElement('span');
+          span.innerHTML = ['<img class="thumb" src="', e.target.result,
+                            '" title="', theFile.name, '"/>'].join('');
+          //document.getElementById('list').insertBefore(span, null);
+	im = new Image();
+	im.src = e.target.result;
+	im.onload = imageLoaded;
+	
+        };
+      })(f);
+      reader.readAsDataURL(f);
+    }
+  }
+
+  document.getElementById('files').addEventListener('change', handleFileSelect, false);
+</script>
+<br>
+<!--  <textarea id="output" rows="10" cols="95" tabindex="1"></textarea>  -->
+<br>
+Created by DCPU-16, modiefied by Martin Brändli
+</body></html>
