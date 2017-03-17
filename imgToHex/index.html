@@ -31,7 +31,8 @@ function imageLoaded() {
 		string += decimalToHex(levelData.data[i*4]*65536+levelData.data[i*4+1]*256+levelData.data[i*4+2],6);
 		//string += "\n";
 	}
-	string += decimalToHex(im.width);
+	string += decimalToHex(im.width,3);
+	string += decimalToHex(im.height,3);
 	
 	//outputdiv = document.getElementById('output');
 	//outputdiv.innerHTML = string;
